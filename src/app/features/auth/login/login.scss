@@ -1,0 +1,231 @@
+.cuerpo {
+  font-family: "Dongle", sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  //justify-content: center;
+  //align-items: center;
+}
+
+.cuerpo {
+  --color-bg1: #dff9fb;
+  --color-bg2: #ffffff;
+  --color1: 104, 109, 224;
+  --color2: 126, 214, 223;
+  --color3: 223, 249, 251;
+  --color4: 255, 121, 121;
+  --color5: 149, 175, 192;
+  --color-interactive: 140, 100, 255;
+  --circle-size: 200%;
+  --blending: hard-light;
+}
+
+@keyframes moveInCircle {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(180deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes moveVertical {
+  0% {
+    transform: translateY(-50%);
+  }
+
+  50% {
+    transform: translateY(50%);
+  }
+
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes moveHorizontal {
+  0% {
+    transform: translateX(-50%) translateY(-10%);
+  }
+
+  50% {
+    transform: translateX(50%) translateY(10%);
+  }
+
+  100% {
+    transform: translateX(-50%) translateY(-10%);
+  }
+}
+
+.gradient-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
+  z-index: -1;
+  overflow: hidden;
+}
+
+.gradient-bg svg {
+  display: none;
+}
+
+.gradient-bg .gradients-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter: url(#goo) blur(40px);
+}
+
+.gradient-bg .g1,
+.gradient-bg .g2,
+.gradient-bg .g3,
+.gradient-bg .g4,
+.gradient-bg .g5 {
+  position: absolute;
+  width: var(--circle-size);
+  height: var(--circle-size);
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0) 50%
+  );
+  mix-blend-mode: var(--blending);
+}
+
+.gradient-bg .g1 {
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--color1), 0.8) 0,
+    rgba(var(--color1), 0) 50%
+  );
+  animation: moveVertical 10s ease infinite;
+}
+
+.gradient-bg .g2 {
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--color2), 0.8) 0,
+    rgba(var(--color2), 0) 50%
+  );
+  animation: moveInCircle 10s reverse infinite;
+}
+
+.gradient-bg .g3 {
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--color3), 0.8) 0,
+    rgba(var(--color3), 0) 50%
+  );
+  animation: moveInCircle 10s linear infinite;
+}
+
+.gradient-bg .g4 {
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--color4), 0.8) 0,
+    rgba(var(--color4), 0) 50%
+  );
+  animation: moveHorizontal 10s ease infinite;
+}
+
+.gradient-bg .g5 {
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--color5), 0.8) 0,
+    rgba(var(--color5), 0) 50%
+  );
+  animation: moveInCircle 10s ease infinite;
+}
+
+.container {
+  width: 400px;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  border: 1px solid rgba(37, 37, 37, 0.5);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(17px);
+  z-index: 2;
+
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+form {
+  display: flex;
+  z-index: 2;
+  flex-direction: column;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+.input-field {
+  position: relative;
+  border-bottom: 2px solid #000;
+  margin: 15px 0;
+}
+
+.input-field input {
+  width: 100%;
+  height: 40px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #000;
+}
+
+#Save-login {
+  accent-color: #000;
+}
+
+.container a {
+  color: #000;
+  text-decoration: none;
+}
+
+.container a:hover {
+  text-decoration: underline;
+}
+
+button {
+  background: #000;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 16px;
+  border: 2px solid transparent;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  color: #000;
+  border-color: #000;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+#icons {
+  position: absolute;
+  top: 30%;
+  left: 90%;
+}

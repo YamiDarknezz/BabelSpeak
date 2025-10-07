@@ -1,1 +1,70 @@
-<p>login works!</p>
+<div class="cuerpo">
+  <div class="gradient-bg">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8"
+            result="goo"
+          />
+          <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+      </defs>
+    </svg>
+
+    <div class="gradients-container">
+      <div class="g1"></div>
+      <div class="g2"></div>
+      <div class="g3"></div>
+      <div class="g4"></div>
+      <div class="g5"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <form (ngSubmit)="onLogin()" class="login-form" autocomplete="on">
+      <h2>Inicio Sesion</h2>
+      <div class="input-field">
+        <i id="icons" class="fas fa-envelope"></i>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="ejemplo@correo.com"
+          required
+          autofocus
+        />
+      </div>
+
+      <div class="input-field">
+        <i id="icons" class="fas fa-lock"></i>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+
+      <button type="submit" [disabled]="loading || !email || !password">
+        @if (loading) {
+        <span class="spinner"></span> Iniciando sesión... } @else {
+        <i class="fa-solid fa-right-to-bracket"></i> Entrar }
+      </button>
+    </form>
+
+    <div class="messages">
+      @if (message) {
+      <p class="success">{{ message }}</p>
+      } @else if (errorMsg) {
+      <p class="error">{{ errorMsg }}</p>
+      }
+    </div>
+  </div>
+</div>
