@@ -9,12 +9,30 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'dashboard',
-    component: Dashboard,
-  },
-  {
     path: 'login',
     component: Login,
+  },
+  // 🔹 Rutas de Dashboard
+  {
+    path: 'dashboard',
+    component: Dashboard,
+    children: [
+      {
+        path: 'translator',
+        loadComponent: () =>
+          import('./features/dashboard/modules/translator/translator').then(
+            (m) => m.Translator
+          ),
+      },
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('./features/dashboard/modules/history/history').then(
+            (m) => m.History
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: '' },
+    ],
   },
   { path: '**', redirectTo: 'login' },
 ];
