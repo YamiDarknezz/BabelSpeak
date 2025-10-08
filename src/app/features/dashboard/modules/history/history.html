@@ -1,1 +1,356 @@
-<p>history works!</p>
+<div
+  class="history-container min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8"
+>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="header-section mb-8 fade-in">
+      <h2
+        class="text-4xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent flex items-center gap-3"
+      >
+        <span class="text-5xl">📜</span>
+        Historial de Transcripciones
+      </h2>
+      <p class="text-gray-400 mt-2 text-sm">
+        Consulta todas tus transcripciones y traducciones anteriores
+      </p>
+    </div>
+
+    <!-- Filtros -->
+    <div
+      class="filters-card glass-card rounded-2xl p-6 mb-8 shadow-2xl border border-purple-500/20 slide-up"
+    >
+      <h3
+        class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2"
+      >
+        <svg
+          class="w-5 h-5 text-violet-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+          />
+        </svg>
+        Filtros de búsqueda
+      </h3>
+
+      <div class="filters-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <!-- Filtrar por tipo -->
+        <div class="filter-group">
+          <label class="block text-gray-400 text-sm font-medium mb-2"
+            >Tipo de proceso</label
+          >
+          <select [(ngModel)]="filtroTipo" class="select-filter w-full">
+            <option value="">🔍 Todos los tipos</option>
+            <option value="transcripcion">📝 Transcripción</option>
+            <option value="traduccion">🌐 Traducción</option>
+          </select>
+        </div>
+
+        <!-- Filtrar por idioma -->
+        <div class="filter-group">
+          <label class="block text-gray-400 text-sm font-medium mb-2"
+            >Idioma</label
+          >
+          <select [(ngModel)]="filtroIdioma" class="select-filter w-full">
+            <option value="">🌍 Todos los idiomas</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="en">🇬🇧 Inglés</option>
+          </select>
+        </div>
+
+        <!-- Ordenar por fecha -->
+        <div class="filter-group">
+          <label class="block text-gray-400 text-sm font-medium mb-2"
+            >Ordenar por fecha</label
+          >
+          <select [(ngModel)]="orden" class="select-filter w-full">
+            <option value="desc">⬇️ Más recientes primero</option>
+            <option value="asc">⬆️ Más antiguos primero</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="filter-actions flex flex-wrap gap-3">
+        <button (click)="aplicarFiltros()" class="btn-apply group">
+          <svg
+            class="w-5 h-5 group-hover:scale-110 transition-transform duration-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+          <span class="ml-2 font-semibold">Aplicar filtros</span>
+        </button>
+
+        <button (click)="limpiarFiltros()" class="btn-clear group">
+          <svg
+            class="w-5 h-5 group-hover:scale-110 group-hover:rotate-90 transition-all duration-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+          <span class="ml-2 font-semibold">Limpiar filtros</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Indicador de carga inicial -->
+    @if (loading && transcriptions.length === 0) {
+    <div
+      class="loading-container glass-card rounded-2xl p-12 text-center border border-purple-500/20"
+    >
+      <div class="loading-spinner">
+        <svg
+          class="animate-spin w-16 h-16 text-violet-400 mx-auto mb-4"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <p class="text-gray-300 text-lg font-medium">Cargando historial...</p>
+        <p class="text-gray-500 text-sm mt-2">Por favor espera un momento</p>
+      </div>
+    </div>
+    } @else {
+    <!-- Lista de transcripciones -->
+    <div class="transcriptions-list">
+      <div
+        class="transcriptions-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        @for (t of transcriptions; track t.$id) {
+        <div
+          class="transcription-card glass-card rounded-xl p-6 border border-purple-500/20 hover:border-violet-400/50 transition-all duration-300 cursor-pointer group"
+          [attr.data-id]="t.$id"
+        >
+          <!-- Header de la tarjeta -->
+          <div class="card-header flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="icon-badge">
+                @if (t.tipo === 'traduccion') {
+                <svg
+                  class="w-6 h-6 text-emerald-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                  />
+                </svg>
+                } @else {
+                <svg
+                  class="w-6 h-6 text-blue-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                }
+              </div>
+              <div>
+                <span class="type-badge">
+                  {{ t.tipo === "traduccion" ? "Traducción" : "Transcripción" }}
+                </span>
+              </div>
+            </div>
+
+            <button
+              class="btn-more opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
+              <svg
+                class="w-5 h-5 text-gray-400 hover:text-violet-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Contenido de la tarjeta -->
+          <div class="card-content space-y-3">
+            <div class="info-row">
+              <span class="info-label">Idioma:</span>
+              <span class="info-value">
+                @if (t.idioma === 'es') {
+                <span class="language-flag">🇪🇸 Español</span>
+                } @else if (t.idioma === 'en') {
+                <span class="language-flag">🇬🇧 Inglés</span>
+                } @else {
+                <span class="language-flag">{{ t.idioma }}</span>
+                }
+              </span>
+            </div>
+
+            <div class="info-row">
+              <span class="info-label">Fecha:</span>
+              <span class="info-value">{{
+                t.fecha_hora | date : "short"
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Footer de la tarjeta -->
+          <div class="card-footer mt-4 pt-4 border-t border-gray-700/50">
+            <button class="btn-view-details w-full group/btn">
+              <span class="font-medium">Ver detalles</span>
+              <svg
+                class="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        } @empty {
+        <div
+          class="empty-state col-span-full glass-card rounded-2xl p-12 text-center border border-purple-500/20"
+        >
+          <div class="empty-icon mb-4">
+            <svg
+              class="w-24 h-24 text-gray-600 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+              />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-300 mb-2">
+            No hay transcripciones
+          </h3>
+          <p class="text-gray-500">
+            Aún no has realizado ninguna transcripción o traducción
+          </p>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pagination-container mt-8 flex justify-center">
+      @if (hasMore) {
+      <button
+        (click)="loadMore()"
+        [disabled]="loading"
+        class="btn-load-more group"
+      >
+        @if (loading) {
+        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <span class="ml-2 font-semibold">Cargando...</span>
+        } @else {
+        <svg
+          class="w-5 h-5 group-hover:translate-y-1 transition-transform duration-300"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+        <span class="ml-2 font-semibold">Cargar más</span>
+        }
+      </button>
+      } @else if (transcriptions.length > 0) {
+      <div
+        class="end-message glass-card rounded-xl px-6 py-3 border border-purple-500/20"
+      >
+        <span class="text-gray-400 flex items-center gap-2">
+          <svg
+            class="w-5 h-5 text-violet-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          No hay más transcripciones
+        </span>
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>
