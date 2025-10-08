@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { JsonPipe } from '@angular/common';
 import { StorageService } from '../../../../core/services/storage/storage';
 import { FunctionsService } from '../../../../core/services/functions/functions';
+import { AuthService } from '../../../../core/services/auth/auth';
 
 @Component({
   selector: 'app-translator',
@@ -22,7 +23,9 @@ export class Translator {
 
   constructor(
     private storageService: StorageService,
-    private functionsService: FunctionsService
+    private functionsService: FunctionsService,
+    private auth: AuthService,
+    private ngZone: NgZone
   ) {}
 
   onFileSelected(event: any) {
@@ -54,13 +57,13 @@ export class Translator {
       };
 
       this.mediaRecorder.onstop = () => {
-        this.recordedBlob = new Blob(chunks, { type: 'audio/wav' });
-        this.audioFile = new File(
-          [this.recordedBlob!],
-          `recorded_${Date.now()}.wav`
-        );
-        this.mediaRecorder = null;
-        this.isRecording = false;
+        const blob = new Blob(chunks, { type: 'audio/wav' });
+        this.ngZone.run(() => {
+          this.recordedBlob = blob;
+          this.audioFile = new File([blob], `recorded_${Date.now()}.wav`);
+          this.mediaRecorder = null;
+          this.isRecording = false;
+        });
       };
 
       this.mediaRecorder.start();
@@ -92,6 +95,13 @@ export class Translator {
       return;
     }
 
+    // Obtener usuario actual
+    const user = await this.auth.getUser();
+    if (!user) {
+      alert('Debes iniciar sesión antes de procesar audio.');
+      return;
+    }
+
     this.isProcessing = true; // Habilita barra de carga
     try {
       const fileId = await this.storageService.uploadFile(this.audioFile);
@@ -99,6 +109,7 @@ export class Translator {
       const execution = await this.functionsService.executeBabelFunction({
         file_id: fileId,
         tipo,
+        user_id: user.$id,
       });
 
       if (execution.responseBody) {
