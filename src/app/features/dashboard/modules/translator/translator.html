@@ -1,1 +1,289 @@
-<p>translator works!</p>
+<div
+  class="translation-container min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8"
+>
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="header-section mb-8 fade-in">
+      <h2
+        class="text-4xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent flex items-center gap-3"
+      >
+        <span class="text-5xl">🎙️</span>
+        Transcripción y Traducción
+      </h2>
+      <p class="text-gray-400 mt-2 text-sm">
+        Sube o graba tu audio para transcribir y traducir
+      </p>
+    </div>
+
+    <!-- Card Principal -->
+    <div
+      class="glass-card rounded-2xl p-8 shadow-2xl border border-purple-500/20 slide-up"
+    >
+      <!-- SUBIR AUDIO -->
+      @if (!isRecording) {
+      <div class="upload-section mb-6">
+        <label class="file-upload-label group">
+          <input
+            type="file"
+            (change)="onFileSelected($event)"
+            accept="audio/*"
+            [disabled]="audioFile != null || isProcessing"
+            class="hidden"
+          />
+          <div
+            class="flex items-center justify-center gap-3 p-6 border-2 border-dashed border-purple-500/50 rounded-xl hover:border-purple-400 hover:bg-purple-500/10 transition-all duration-300 cursor-pointer"
+          >
+            <svg
+              class="w-8 h-8 text-purple-400 group-hover:scale-110 transition-transform duration-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
+            </svg>
+            <span class="text-gray-300 font-medium"
+              >Subir archivo de audio</span
+            >
+          </div>
+        </label>
+      </div>
+      }
+
+      <!-- GRABAR AUDIO -->
+      @if (!audioFile) {
+      <div class="recording-section mb-6 flex justify-center">
+        @if (!isRecording) {
+        <button
+          (click)="startRecording()"
+          [disabled]="isProcessing"
+          class="btn-record group"
+        >
+          <div class="pulse-ring"></div>
+          <svg
+            class="w-6 h-6 group-hover:scale-110 transition-transform duration-300"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span class="ml-2 font-semibold">Iniciar Grabación</span>
+        </button>
+        } @else {
+        <button
+          (click)="stopRecording()"
+          [disabled]="isProcessing"
+          class="btn-stop"
+        >
+          <span class="recording-dot"></span>
+          <span class="ml-2 font-semibold">Detener Grabación</span>
+        </button>
+        }
+      </div>
+      }
+
+      <!-- ELIMINAR AUDIO -->
+      @if (audioFile) {
+      <div
+        class="audio-file-section mb-6 p-4 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-xl border border-emerald-500/30 fade-in"
+      >
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center"
+            >
+              <svg
+                class="w-6 h-6 text-emerald-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="text-gray-200 font-medium">{{ audioFile.name }}</p>
+              <p class="text-gray-400 text-sm">Archivo listo para procesar</p>
+            </div>
+          </div>
+          <button
+            (click)="removeAudio()"
+            [disabled]="isProcessing"
+            class="btn-delete group"
+          >
+            <svg
+              class="w-5 h-5 group-hover:scale-110 transition-transform duration-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      }
+
+      <!-- SELECCIÓN DE TIPO -->
+      <div class="select-section mb-6">
+        <label class="block text-gray-300 text-sm font-semibold mb-2"
+          >Tipo de procesamiento</label
+        >
+        <select
+          [(ngModel)]="tipoInput"
+          [disabled]="isProcessing"
+          class="select-custom w-full"
+        >
+          <option value="es">🇪🇸 Transcripción (Español)</option>
+          <option value="en">
+            🇬🇧 Transcripción + Traducción (Inglés → Español)
+          </option>
+        </select>
+      </div>
+
+      <!-- BOTÓN DE PROCESAR -->
+      @if (audioFile) {
+      <button
+        (click)="processAudio(tipoInput)"
+        [disabled]="isProcessing"
+        class="btn-process w-full group"
+      >
+        @if (!isProcessing) {
+        <svg
+          class="w-5 h-5 group-hover:scale-110 transition-transform duration-300"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 10V3L4 14h7v7l9-11h-7z"
+          />
+        </svg>
+        <span class="ml-2 font-bold">Procesar Audio</span>
+        } @else {
+        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <span class="ml-2 font-bold">Procesando...</span>
+        }
+      </button>
+      }
+
+      <!-- BARRA DE CARGA -->
+      @if (isProcessing) {
+      <div class="loading-bar-container mt-6">
+        <div class="loading-bar">
+          <div class="loading-progress"></div>
+        </div>
+        <p class="text-center text-gray-400 text-sm mt-2">
+          Por favor espera mientras procesamos tu audio...
+        </p>
+      </div>
+      }
+    </div>
+
+    <!-- RESULTADOS -->
+    @if (functionResponse) {
+    <div
+      class="results-card mt-8 glass-card rounded-2xl p-8 shadow-2xl border border-emerald-500/20 fade-in"
+    >
+      <h4 class="text-2xl font-bold text-gray-100 flex items-center gap-2 mb-6">
+        <span>📄</span>
+        Resultado
+      </h4>
+
+      @if (functionResponse.response) {
+      <div class="result-content space-y-6">
+        <!-- Info básica -->
+        <div class="info-grid grid grid-cols-2 gap-4">
+          <div class="info-badge">
+            <span class="text-gray-400 text-sm">Tipo</span>
+            <p class="text-violet-300 font-semibold">
+              {{ functionResponse.response.tipo }}
+            </p>
+          </div>
+          <div class="info-badge">
+            <span class="text-gray-400 text-sm">Idioma detectado</span>
+            <p class="text-violet-300 font-semibold">
+              {{ functionResponse.response.idioma }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Transcripción -->
+        <div class="result-section">
+          <div class="flex items-center gap-2 mb-3">
+            <div
+              class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-xl">🗒️</span>
+            </div>
+            <h5 class="text-lg font-bold text-gray-200">Transcripción</h5>
+          </div>
+          <p
+            class="text-gray-300 leading-relaxed p-4 bg-slate-800/50 rounded-lg border border-slate-700/50"
+          >
+            {{ functionResponse.response.transcription }}
+          </p>
+        </div>
+
+        <!-- Traducción -->
+        @if (functionResponse.response.translation) {
+        <div class="result-section">
+          <div class="flex items-center gap-2 mb-3">
+            <div
+              class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-xl">🌎</span>
+            </div>
+            <h5 class="text-lg font-bold text-gray-200">Traducción</h5>
+          </div>
+          <p
+            class="text-gray-300 leading-relaxed p-4 bg-slate-800/50 rounded-lg border border-slate-700/50"
+          >
+            {{ functionResponse.response.translation }}
+          </p>
+        </div>
+        }
+      </div>
+      } @else {
+      <pre
+        class="text-gray-300 bg-slate-800/50 p-4 rounded-lg overflow-x-auto"
+        >{{ functionResponse | json }}</pre
+      >
+      }
+    </div>
+    }
+  </div>
+</div>

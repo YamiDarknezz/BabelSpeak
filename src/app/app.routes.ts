@@ -31,7 +31,7 @@ export const routes: Routes = [
             (m) => m.History
           ),
       },
-      { path: '', pathMatch: 'full', redirectTo: '' },
+      { path: '', pathMatch: 'full', redirectTo: 'translator' },
     ],
   },
   { path: '**', redirectTo: 'login' },

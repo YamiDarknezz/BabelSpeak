@@ -4,12 +4,8 @@
   width: 100%;
 
   .main-area {
-    flex: 1; // Ocupa el resto del espacio al lado del sidebar
-    overflow-y: auto; // Permite scroll si el contenido es más grande que la pantalla
-    background-color: #f9fafb; // Fondo claro para el contenido
-  }
-
-  .content {
-    padding: 2rem; // Espacio interno
+    flex: 1;
+    overflow-y: auto;
+    background-color: #f9fafb;
   }
 }
