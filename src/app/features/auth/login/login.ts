@@ -6,7 +6,6 @@ import { AuthService } from '../../../core/services/auth/auth';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
@@ -21,15 +20,12 @@ export class Login implements OnInit {
   constructor(private auth: AuthService, private router: Router) {}
 
   async ngOnInit() {
-    try {
-      const user = await this.auth.getUser();
-      if (user) {
-        console.log('🔄 Sesión detectada, redirigiendo al dashboard...');
-        await this.router.navigate(['/dashboard']);
-      }
-    } catch (error) {
-      console.warn('No hay sesión activa');
+    const user = await this.auth.getUser(); // nunca lanza error
+    if (user) {
+      //console.log('🔄 Sesión detectada, redirigiendo al dashboard...');
+      await this.router.navigate(['/dashboard']);
     }
+    // Si no hay sesión, no hace nada y no genera logs rojos
   }
 
   async onLogin() {
@@ -49,7 +45,7 @@ export class Login implements OnInit {
       await this.router.navigate(['/dashboard']);
     } catch (error: any) {
       this.errorMsg = error.message || 'Error al iniciar sesión';
-      console.error('Error en login:', error);
+      //console.error('Error en login:', error);
     } finally {
       this.loading = false;
     }

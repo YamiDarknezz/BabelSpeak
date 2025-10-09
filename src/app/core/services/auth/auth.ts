@@ -24,26 +24,27 @@ export class AuthService {
     }
   }
 
-  /** Iniciar sesión o devolver sesión activa */
+  /** Iniciar sesión o devolver sesión activa (sin logs rojos) */
   async loginUser(email: string, password: string) {
-    try {
-      // 🔹 Verificar si ya hay sesión
-      const current = await this.account.get();
+    // Intentar obtener el usuario actual sin lanzar error
+    const current = await this.getUser();
+    if (current) {
       return {
         user: current,
         message: `Ya tienes una sesión activa como ${current.name}`,
       };
-    } catch {
-      // 🔹 Si no hay sesión activa, crear una nueva
-      const session = await this.account.createEmailPasswordSession(
-        email,
-        password
-      );
-      const user = await this.account.get();
+    }
+
+    // Si no hay sesión, crear una nueva
+    try {
+      await this.account.createEmailPasswordSession(email, password);
+      const user = await this.getUser(); // ya es seguro, no lanza error
       return {
         user,
-        message: `Bienvenido, ${user.name || 'usuario'}!`,
+        message: `Bienvenido, ${user?.name || 'usuario'}!`,
       };
+    } catch (err: any) {
+      throw this.handleError(err);
     }
   }
 
@@ -77,7 +78,6 @@ export class AuthService {
     if (error?.code === 409) return new Error('El correo ya está registrado.');
     if (error?.code === 500)
       return new Error('Error del servidor. Intenta más tarde.');
-
     return new Error(error?.message || 'Error desconocido.');
   }
 }
