@@ -39,13 +39,10 @@ export class Login implements OnInit {
         this.password
       );
       this.message = message;
-      //console.log('Sesión activa:', user); Debug
 
-      // Redirigir al dashboard después del login exitoso
       await this.router.navigate(['/dashboard']);
     } catch (error: any) {
       this.errorMsg = error.message || 'Error al iniciar sesión';
-      //console.error('Error en login:', error);
     } finally {
       this.loading = false;
     }

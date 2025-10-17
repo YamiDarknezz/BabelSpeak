@@ -1,6 +1,33 @@
 <div class="dashboard-layout">
+  <!-- Overlay para cerrar sidebar en mobile -->
+  <div
+    class="sidebar-overlay"
+    [class.active]="isSidebarOpen"
+    (click)="closeSidebar()"
+  ></div>
+
+  <!-- Botón toggle para mobile -->
+  <button
+    class="sidebar-toggle"
+    (click)="toggleSidebar()"
+    type="button"
+    aria-label="Toggle menu"
+  >
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4 6h16M4 12h16M4 18h16"
+      />
+    </svg>
+  </button>
+
   <!-- Sidebar -->
-  <app-sidebar></app-sidebar>
+  <app-sidebar
+    [isOpen]="isSidebarOpen"
+    (closeRequested)="closeSidebar()"
+  ></app-sidebar>
 
   <!-- Contenido principal -->
   <div class="main-area">
