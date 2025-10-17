@@ -56,3 +56,36 @@
 .logo-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+// Estilos responsivos del sidebar
+:host {
+  display: block;
+
+  // En desktop, siempre visible
+  @media (min-width: 1025px) {
+    position: relative;
+  }
+
+  // En mobile y tablet
+  @media (max-width: 1024px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+
+    &.sidebar-open {
+      transform: translateX(0);
+    }
+  }
+}
+
+// Aplicar transform solo al contenedor principal en mobile
+@media (max-width: 1024px) {
+  :host > div {
+    box-shadow: 4px 0 6px -1px rgba(0, 0, 0, 0.1),
+      2px 0 4px -1px rgba(0, 0, 0, 0.06);
+  }
+}

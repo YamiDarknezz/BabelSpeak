@@ -1,5 +1,6 @@
 <div
   class="flex flex-col items-start w-56 sm:w-64 md:w-72 lg:w-80 min-h-screen overflow-auto text-gray-100 bg-gradient-to-b from-slate-900 via-purple-900 to-slate-900 shadow-2xl slide-in"
+  [class.sidebar-open]="isOpen"
 >
   <!-- Logo -->
   <a class="flex items-center w-full px-4 mt-3 group cursor-pointer fade-in">
@@ -37,6 +38,7 @@
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
         class="menu-item flex items-center w-full h-14 px-4 rounded-xl hover:bg-purple-800/40 hover:shadow-lg hover:shadow-purple-500/20 group"
+        (click)="onLinkClick()"
       >
         <div
           class="flex items-center justify-center w-10 h-10 rounded-lg bg-violet-500/20 group-hover:bg-violet-500/30 transition-all duration-300"
@@ -81,6 +83,7 @@
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
         class="menu-item flex items-center w-full h-14 px-4 rounded-xl hover:bg-purple-800/40 hover:shadow-lg hover:shadow-purple-500/20 group"
+        (click)="onLinkClick()"
       >
         <div
           class="flex items-center justify-center w-10 h-10 rounded-lg bg-fuchsia-500/20 group-hover:bg-fuchsia-500/30 transition-all duration-300"
